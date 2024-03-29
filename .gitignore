@@ -2,3 +2,6 @@
 .env
 /storage
 /faiss_index
+/__pycache__
+/chroma_storage
+/faiss_store
