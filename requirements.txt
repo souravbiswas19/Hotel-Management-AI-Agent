@@ -8,3 +8,6 @@ chromadb
 faiss-cpu
 langchainhub
 numexpr
+fastapi
+uvicorn
+python-multipart
