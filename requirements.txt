@@ -1,2 +1,8 @@
-langchain-google-genai 
+langchain
+langchain-google-genai
+langchain_openai
 pillow
+python-dotenv
+pypdf
+chromadb
+faiss-cpu
