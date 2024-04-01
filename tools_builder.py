@@ -6,7 +6,7 @@ def build_tools(retriever, llm):
     retriever_tool = create_retriever_tool(
         retriever=retriever,
         name="hotel_search",
-        description="Search for information about Hotel check-in, check out, types of rooms, price of rooms, water activities. \
+        description="Greet the user and search for information about Hotel check-in, check out, types of rooms, price of rooms, water activities. \
             For any questions on the above topics, you must use this tool!",
     )
     problem_chain = LLMMathChain.from_llm(llm=llm)
