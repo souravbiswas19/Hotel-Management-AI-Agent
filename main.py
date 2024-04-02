@@ -17,19 +17,19 @@ embeddings = load_Gemini_embeddings()
 agent_executer = None
 
 # API End point to accept the PDF file from the user
-@app.get("/upload/")
-async def upload_file():
+@app.post("/upload/")
+async def upload_file(file: UploadFile = File(...)):
     """Function to upload a file"""
     global agent_executer
     try:
         # Check if the file is a PDF
-        # if not file.filename.endswith(".pdf"):
-        #     raise HTTPException(status_code=400, detail="Only PDF files are allowed")
-        # # Save the uploaded PDF file
-        # with open(file.filename, "wb") as buffer:
-        #     buffer.write(await file.read())
+        if not file.filename.endswith(".pdf"):
+            raise HTTPException(status_code=400, detail="Only PDF files are allowed")
+        # Save the uploaded PDF file
+        with open(file.filename, "wb") as buffer:
+            buffer.write(await file.read())
         # Documents are being read from the pdf
-        documents = process_pdf()
+        documents = process_pdf(filename=file.filename)
         # Function called to store the documents into the database
         chroma_db = store_to_chromadb(documents=documents, embeddings=embeddings)
         retriever = chroma_db.as_retriever()
