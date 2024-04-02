@@ -103,6 +103,14 @@ Direct download link of Python 3.11.8: [Click to download from here](https://www
 
 5. Setting up the `.env` file is provided in the `.env.examples` file in the Project directory. Assign your GOOGLE_API_KEY save the `.env.examples` file as `.env` file only. If you don't have a GOOGLE_API_KEY generate one from here [Google API Key Documentation](https://makersuite.google.com/app/apikey)
 
+    **Step 1** - Click on Create API Key
+
+    ![GoogleAI](/logos/Screenshot%20(58).png)
+
+    **Step 2** - Choose your Project
+
+    ![Google AI2](/logos/Screenshot%20(59).png)
+
     ```bash
     GOOGLE_API_KEY = "<YOUR GOOGLE API KEY>"
     LANGCHAIN_TRACING_V2=true
