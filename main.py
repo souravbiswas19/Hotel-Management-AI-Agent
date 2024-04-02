@@ -2,7 +2,9 @@
 # Libraries imported 
 from fastapi import FastAPI, UploadFile, File, HTTPException, status
 from pdf_handler import process_pdf
-from llm_embedding import load_Gemini_embeddings, load_Gemini
+from config import GOOGLE_API_KEY
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAI
 from vector_database import store_to_chromadb, load_from_chromadb
 from tools_builder import build_tools
 from agent import build_agent
@@ -10,9 +12,9 @@ from agent import build_agent
 # Initialization of FastAPI
 app = FastAPI()
 # Initialization of Google Gemini
-llm = load_Gemini()
+llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=GOOGLE_API_KEY, temperature=0.5)
 # Initialization of Google Gemini Embeddings
-embeddings = load_Gemini_embeddings()
+embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
 
 agent_executer = None
 
