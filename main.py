@@ -5,7 +5,7 @@ from pdf_handler import process_pdf
 from config import GOOGLE_API_KEY
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_google_genai import GoogleGenerativeAI
-from vector_database import store_to_chromadb, load_from_chromadb
+from vector_database import store_to_chromadb
 from tools_builder import build_tools
 from agent import build_agent
 
