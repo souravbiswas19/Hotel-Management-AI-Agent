@@ -7,7 +7,7 @@ from langchain.tools.retriever import create_retriever_tool
 from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import GoogleGenerativeAI
 
-def api_get_rates(query):
+def api_get_rates():
     url = 'https://private-anon-6c36a59c69-tshapiv20.apiary-mock.com/hotels/get_rates/'
     response = requests.get(url)
     return json.dumps(response.json())
@@ -15,7 +15,7 @@ search_api_rates = Tool.from_function(name="Search Rates",
                                  func=api_get_rates,
                                  description="Useful for searching Hotel Rates")
 
-def api_get_info(query):
+def api_get_info():
     url = 'https://private-anon-9e7f4fb9c1-tshapiv20.apiary-mock.com/hotels/get_detailed_info/'
     response = requests.get(url)
     return json.dumps(response.json())
@@ -23,7 +23,7 @@ search_api_info = Tool.from_function(name="Search Detailed Information",
                                  func=api_get_info,
                                  description="Useful for searching Hotel Details or Information about the hotel")
 
-def api_get_checkout_data(query):
+def api_get_checkout_data():
     url = 'https://private-anon-9e7f4fb9c1-tshapiv20.apiary-mock.com/hotels/get_checkout_data/'
     response = requests.get(url)
     return json.dumps(response.json())
