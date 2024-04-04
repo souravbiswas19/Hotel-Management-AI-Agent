@@ -1,9 +1,9 @@
 """This is the FastAPI module for creating api endpoints"""
 # Libraries imported 
+import os
 from typing import Optional
 import jwt
-from jwt.exceptions import InvalidTokenError
-from Authentication.configure import ALGORITHM, JWT_SECRET_KEY
+from Authentication.configure import JWT_SECRET_KEY
 from fastapi import FastAPI, UploadFile, File, HTTPException, status
 from file_handler import process_pdf, process_csv, process_txt, process_docx
 from config import GOOGLE_API_KEY
@@ -19,7 +19,6 @@ from Authentication.database import Base, SessionLocal, engine
 from sqlalchemy.orm import Session
 from fastapi import FastAPI, Depends, HTTPException,status, Header
 from Authentication.auth_bearer import JWTBearer
-from functools import wraps
 from Authentication.utils import create_access_token, get_hashed_password, verify_password
 
 # Initialization of FastAPI
@@ -95,6 +94,9 @@ async def upload_file(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail="Only PDF, CSV, TXT and DOCX files are allowed")
         # Function called to store the documents into the database
         chroma_db = store_to_chromadb(documents=documents, embeddings=embeddings)
+        
+        # Removes the file from the local storage so that memory is not occupied
+        os.remove(file.filename)
         return {'Message': 'File Stored successfully'}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
