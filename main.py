@@ -101,21 +101,14 @@ async def upload_file(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e)) from e
 
-@app.post("/ask_query/", dependencies=[Depends(JWTBearer())], status_code=status.HTTP_302_FOUND)
-async def get_reply(session_id: int, question: str, authorization: Optional[str] = Header(None), db: Session = Depends(get_session)):
+@app.post("/ask_query/", status_code=status.HTTP_302_FOUND)
+async def get_reply(session_id: int, question: str, db: Session = Depends(get_session), dependencies=Depends(JWTBearer())):
     """Function to get a reply"""
     global agent_executer
     try:
-        print(authorization)
-        if not authorization:
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing authorization header")
-        
         try:
-            scheme, token = authorization.split()
-            if scheme.lower() != 'bearer':
-                raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authorization scheme")
             
-            payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=['HS256'])
+            payload = jwt.decode(dependencies, JWT_SECRET_KEY, algorithms=['HS256'])
             user_id = payload.get('sub')
             if user_id is None:
                 raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
@@ -138,7 +131,6 @@ async def get_reply(session_id: int, question: str, authorization: Optional[str]
             db.refresh(session_entry)
 
         # Retrieve chat history for the session
-        # session_chat_history = db.query(models.ChatHistory).filter(models.ChatHistory.user_id == user.id, models.ChatHistory.session_id == session_id).all()
         chroma_db = load_from_chromadb(embeddings=embeddings)
         retriever = chroma_db.as_retriever()
         tools = build_tools(retriever=retriever, llm=llm)
@@ -150,29 +142,15 @@ async def get_reply(session_id: int, question: str, authorization: Optional[str]
         db.add(new_chat_entry)
         db.commit()
         chat_history.append({'question': question, 'response': output["output"]})
-        return {'Message': output["output"]}
+        session_chat_history = db.query(models.ChatHistory).filter(models.ChatHistory.user_id == user.id, models.ChatHistory.session_id == session_id).all()
+        return {'Chat History':session_chat_history, 'Message': output["output"]}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
-# @app.get("/show_chat", dependencies=[Depends(JWTBearer())])
-# async def show_chat(current_user: User = Depends(get_current_user), db: Session = Depends(get_session)):
-#     # Retrieve chat history for the current user
-#     user_chat_history = db.query(models.ChatHistory).filter(models.ChatHistory.user_id == current_user.id).all()
-#     return user_chat_history
 
-@app.get('/get_current_users', dependencies=[Depends(JWTBearer())])
-def get_current_user(session_id: int,session: Session = Depends(get_session), 
-                      authorization: Optional[str] = Header(None)):
-    print(authorization)
-    if not authorization:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing authorization header")
-    
+@app.get('/get_current_users')
+def get_current_user(session_id: int,session: Session = Depends(get_session), dependencies=Depends(JWTBearer())):
     try:
-        scheme, token = authorization.split()
-        if scheme.lower() != 'bearer':
-            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid authorization scheme")
-        
-        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=['HS256'])
+        payload = jwt.decode(dependencies, JWT_SECRET_KEY, algorithms=['HS256'])
         user_id = payload.get('sub')
         if user_id is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
