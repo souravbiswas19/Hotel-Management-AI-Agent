@@ -94,6 +94,7 @@ async def upload_file(file: UploadFile = File(...)):
             raise HTTPException(status_code=400, detail="Only PDF, CSV, TXT and DOCX files are allowed")
         # Function called to store the documents into the database
         chroma_db = store_to_chromadb(documents=documents, embeddings=embeddings)
+        
         # Removes the file from the local storage so that memory is not occupied
         os.remove(file.filename)
         return {'Message': 'File Stored successfully'}
