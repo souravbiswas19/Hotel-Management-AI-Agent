@@ -7,9 +7,9 @@ from uuid import uuid4
 from Authentication.configure import JWT_SECRET_KEY
 from fastapi import FastAPI, UploadFile, File, HTTPException, status
 from file_handler import process_pdf, process_csv, process_txt, process_docx
-from config import GOOGLE_API_KEY
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_google_genai import GoogleGenerativeAI
+from config import OPENAI_API_KEY
+from langchain_openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI
 from vector_database import store_to_chromadb, load_from_chromadb
 from tools_builder import build_tools
 from agent import build_agent
@@ -34,11 +34,23 @@ def get_session():
         session.close()
 
 # Initialization of Google Gemini
-llm = GoogleGenerativeAI(model="gemini-pro", google_api_key=GOOGLE_API_KEY, temperature=0.5)
+llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=1, api_key=OPENAI_API_KEY)
 # Initialization of Google Gemini Embeddings
-embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key=GOOGLE_API_KEY)
+class CustomOpenAIEmbeddings(OpenAIEmbeddings):
+
+    def __init__(self, openai_api_key, *args, **kwargs):
+        super().__init__(openai_api_key=openai_api_key, *args, **kwargs)
+        
+    def _embed_documents(self, texts):
+        return super().embed_documents(texts)  # <--- use OpenAIEmbedding's embedding function
+
+    def __call__(self, input):
+        return self._embed_documents(input)   
+
+embeddings = CustomOpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 chat_history = []
 agent_executer = None
+
 
 
 @app.post("/register", status_code=status.HTTP_201_CREATED)
