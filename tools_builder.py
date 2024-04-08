@@ -11,7 +11,7 @@ def api_get_rates(query):
     url = 'https://private-anon-6c36a59c69-tshapiv20.apiary-mock.com/hotels/get_rates/'
     response = requests.get(url)
     return json.dumps(response.json())
-search_api_rates = Tool.from_function(name="Search Rates",
+search_api_rates = Tool.from_function(name="Search_Rates",
                                  func=api_get_rates,
                                  description="Useful for searching Hotel Rates")
 
@@ -19,7 +19,7 @@ def api_get_info(query):
     url = 'https://private-anon-9e7f4fb9c1-tshapiv20.apiary-mock.com/hotels/get_detailed_info/'
     response = requests.get(url)
     return json.dumps(response.json())
-search_api_info = Tool.from_function(name="Search Detailed Information",
+search_api_info = Tool.from_function(name="Search_Detailed_Information",
                                  func=api_get_info,
                                  description="Useful for searching Hotel Details or Information about the hotel")
 
@@ -27,7 +27,7 @@ def api_get_checkout_data(query):
     url = 'https://private-anon-9e7f4fb9c1-tshapiv20.apiary-mock.com/hotels/get_checkout_data/'
     response = requests.get(url)
     return json.dumps(response.json())
-search_api_checkout_data = Tool.from_function(name="Search Checkout Details",
+search_api_checkout_data = Tool.from_function(name="Search_Checkout_Details",
                                  func=api_get_checkout_data,
                                  description="Useful for searching Hotel checkout details")
 
@@ -62,9 +62,9 @@ def build_tools(retriever, llm):
                 func=problem_chain.run,
                  description="Useful for when you need to answer questions \
     about math. This tool is only for math questions and nothing else for the price calculation of hotel rooms.")
-    search_tool = Tool.from_function(name="Google Search",
+    search_tool = Tool.from_function(name="Google_Search",
                                  func=search_on_google,
                                  description="Useful for searching query for searching query on Internet or when question cannot be answered from the given source. ")
     
-    tools = [retriever_tool,math_tool,search_tool,search_api_rates,search_api_info, search_api_checkout_data]
+    tools = [retriever_tool,math_tool,search_api_checkout_data,search_api_info,search_api_rates,search_tool]
     return tools
