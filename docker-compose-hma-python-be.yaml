@@ -7,18 +7,21 @@ services:
     ports: 
       - 13000:8000
     environment:
-      GOOGLE_API_KEY: ${{secrets.GOOGLE_API_KEY}}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY}
       LANGCHAIN_TRACING_V2: true
       LANGCHAIN_ENDPOINT: https://api.smith.langchain.com
-      LANGCHAIN_API_KEY: ${secrets.LANGCHAIN_API_KEY}
-      LANGCHAIN_PROJECT: ${secrets.LANGCHAIN_PROJECT}
-      OPENAI_API_KEY: ${secrets.OPENAI_API_KEY}
-      ALGORITHM: HS256
-      JWT_SECRET_KEY: ${secrets.JWT_SECRET_KEY}
-      DATABASE_URL: "postgresql://${secrets.DATABASE_USER}:${secrets.DATABASE_PASSWORD}@pg-hma-python-db/${secrets.DATABASE_NAME}"
+      LANGCHAIN_API_KEY: ${LANGCHAIN_API_KEY}
+      LANGCHAIN_PROJECT: ${LANGCHAIN_PROJECT}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ALGORITHM: "HS256"
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      DATABASE_URL: "postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@pg-hma-python-db/${DATABASE_NAME}"
     command: "uvicorn main:app --host 0.0.0.0 --port 8000"
+    
+    restart: unless-stopped
     depends_on:
-      pg-hma-python-db: service_healthy
+      pg-hma-python-db:
+        condition: service_healthy
     networks:
       - hma-python-network
   
