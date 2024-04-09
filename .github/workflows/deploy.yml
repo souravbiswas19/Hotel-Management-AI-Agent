@@ -10,6 +10,9 @@ env:
   LANGCHAIN_PROJECT: ${{secrets.LANGCHAIN_PROJECT}}
   OPENAI_API_KEY: ${{secrets.OPENAI_API_KEY}}
   ALGORITHM: HS256
+  DATABASE_USER: ${{secrets.DATABASE_USER}}
+  DATABASE_PASSWORD: ${{secrets.DATABASE_PASSWORD}}
+  DATABASE_NAME: ${{secrets.DATABASE_NAME}}
   JWT_SECRET_KEY: ${{secrets.JWT_SECRET_KEY}}
   DATABASE_URL: "postgresql://${{secrets.DATABASE_USER}}:${{secrets.DATABASE_PASSWORD}}@pg-hma-python-db/${{secrets.DATABASE_NAME}}"
 jobs:
@@ -57,6 +60,9 @@ jobs:
                   echo "ALGORITHM=HS256" >> .env
                   echo "JWT_SECRET_KEY=${{secrets.JWT_SECRET_KEY}}" >> .env
                   echo "DATABASE_URL=${{env.DATABASE_URL}}" >> .env
+                  echo "DATABASE_USER=${{secrets.DATABASE_USER}}" >> .env
+                  echo "DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}}" >> .env
+                  echo "DATABASE_NAME=${{secrets.DATABASE_NAME}}" >> .env
                   docker compose -f docker-compose-hma-python-be.yaml down --volumes
                   docker compose -f docker-compose-hma-python-be.yaml pull
                   docker compose -f docker-compose-hma-python-be.yaml up -d
