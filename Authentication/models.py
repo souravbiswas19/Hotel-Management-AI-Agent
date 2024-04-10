@@ -12,6 +12,7 @@ class User(Base):
     password = Column(String(100), nullable=False)
     # Add a relationship with chat history
     chat_history = relationship("ChatHistory", back_populates="user")
+    title_table = relationship("Title", back_populates="user")
 
 
 class TokenTable(Base):
@@ -29,6 +30,13 @@ class ChatHistory(Base):
     session_id = Column(String)
     question = Column(String)
     response = Column(String)
-    
     # Define the relationship with User
     user = relationship("User", back_populates="chat_history")
+
+class Title(Base):
+    __tablename__ = 'title_table'
+    id = Column(Integer, primary_key=True, index=True)
+    session_id = Column(String, index=True)
+    title = Column(String)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship("User", back_populates="title_table")
